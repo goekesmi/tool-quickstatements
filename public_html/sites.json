@@ -1,4 +1,12 @@
 {
+	"172.20.48.41" : {
+		"oauth" : { "language":"wikidata" , "project":"wikidata" } ,
+		"server" : "172.20.48.41",
+		"types" : {
+			"P" : { "type":"property" , "ns":120 , "ns_prefix":"Property:" } ,
+			"Q" : { "type":"item" , "ns":0 , "ns_prefix":"Item:" }
+		}
+	},
 	"wikidata" : {
 		"oauth" : { "language":"wikidata" , "project":"wikidata" } ,
 		"server" : "www.wikidata.org" ,

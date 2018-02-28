@@ -1,6 +1,6 @@
 <?PHP
 
-error_reporting(E_ERROR|E_CORE_ERROR|E_ALL|E_COMPILE_ERROR); // 
+//error_reporting(E_ERROR|E_CORE_ERROR|E_ALL|E_COMPILE_ERROR); // 
 ini_set('display_errors', 'On');
 header('Content-type: application/json; charset=UTF-8');
 header("Cache-Control: no-cache, must-revalidate");
@@ -13,8 +13,7 @@ $action = get_request ( 'action' , '' ) ;
 
 if ( isset ( $_REQUEST['oauth_verifier'] ) ) {
 	$oa = $qs->getOA() ; // Answer to OAuth
-	header( "Location: https://tools.wmflabs.org/quickstatements" );
-	exit(0) ;
+        header( "Location: http://172.20.48.39/quickstatements" );
 }
 
 if ( $action == 'import' ) {

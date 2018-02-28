@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/opt/local/bin/php
 <?PHP
 
 require_once ( __DIR__ . '/public_html/quickstatements.php' ) ;
