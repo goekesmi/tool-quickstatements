@@ -154,7 +154,7 @@ class QuickStatements {
 	
 	public function isUserBlocked ( $username ) {
 		$username = ucfirst ( str_replace ( ' ' , '_' , trim ( $username ) ) ) ;
-		$url = "http://172.20.48.41/wiki/api.php?action=query&list=blocks&format=json&bkusers=" . urlencode ( $username ) ;
+		$url = "http://" . $this->getSite()->server . "/wiki/api.php?action=query&list=blocks&format=json&bkusers=" . urlencode ( $username ) ;
 		$j = json_decode ( file_get_contents ( $url ) ) ;
 		foreach ( $j->query->blocks AS $b ) {
 			//if ( $username == $b->user ) 
@@ -530,6 +530,12 @@ if ( !isset($o->id) ) print_r ( $o ) ;
 		$site = $this->site ;
 		return $this->sites->$site ;
 	}
+	
+	protected function getSiteBase () {
+		$site = $this->sites->$site ;
+		return $site->protocol . "://" . $site->server . $site->wikiroot ;
+	}
+			
 	
 	protected function getBotAPI ( $force_login = false ) {
 		global $qs_global_bot_api ;
