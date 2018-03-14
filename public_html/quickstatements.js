@@ -156,7 +156,7 @@ var QuickStatements = {
 			var d2 = d.data[batch_id] ;
 			var h = '' ;
 			if ( d2.name != '' ) h += "<h2>" + me.safeHTML(d2.batch.name) + "</h2>" ;
-			h += "<p>User: <a href='" this.getSiteBase() + "index.php/User:" + encodeURIComponent(d2.batch.user_name) + "' target='_blank'>" + me.safeHTML(d2.batch.user_name) + "</a>" ;
+			h += "<p>User: <a href='" + this.getSiteBase() + "index.php/User:" + encodeURIComponent(d2.batch.user_name) + "' target='_blank'>" + me.safeHTML(d2.batch.user_name) + "</a>" ;
 			h += " <small>(<a href='/quickstatements/#mode=batches&user="+encodeURIComponent(d2.batch.user_name)+"' onclick='QuickStatements.batchesByUser(\""+encodeURIComponent(d2.batch.user_name)+"\");return false'>batches by this user</a>)</small>" ;
 			h += "</p>" ;
 			h += "<p>Status: <b>" + d2.batch.status + "</b> <small>" + me.safeHTML(d2.batch.message) + "</small></p>" ;
