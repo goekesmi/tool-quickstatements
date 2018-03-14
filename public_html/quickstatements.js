@@ -73,14 +73,19 @@ var QuickStatements = {
 		me.types = me.sites[me.site].types ;
 	} ,
 
+	getSiteBase : function () {
+		var me = this ;
+		return me.sites[me.site].protocol + '://' + me.sites[me.site].server + me.sites[me.site].wikiroot ;
+        } ,
+
 	getSiteAPI : function () {
 		var me = this ;
-		return 'http://' + me.sites[me.site].server + '/wiki/api.php' ;
+		return this.getSiteBase() +'api.php' ;
 	} ,
 	
 	getSitePageURL : function ( page ) {
 		var me = this ;
-		return '//' + me.sites[me.site].server + '/wiki/index.php/' + encodeURIComponent ( page.replace(/ /g,'_') ) ;
+		return this.getSiteBase() + 'index.php/' + encodeURIComponent ( page.replace(/ /g,'_') ) ;
 	} ,
 	
 	lang : function () {
@@ -151,7 +156,7 @@ var QuickStatements = {
 			var d2 = d.data[batch_id] ;
 			var h = '' ;
 			if ( d2.name != '' ) h += "<h2>" + me.safeHTML(d2.batch.name) + "</h2>" ;
-			h += "<p>User: <a href='https://172.20.48.39//wiki/index.php/User:" + encodeURIComponent(d2.batch.user_name) + "' target='_blank'>" + me.safeHTML(d2.batch.user_name) + "</a>" ;
+			h += "<p>User: <a href='" this.getSiteBase() + "index.php/User:" + encodeURIComponent(d2.batch.user_name) + "' target='_blank'>" + me.safeHTML(d2.batch.user_name) + "</a>" ;
 			h += " <small>(<a href='/quickstatements/#mode=batches&user="+encodeURIComponent(d2.batch.user_name)+"' onclick='QuickStatements.batchesByUser(\""+encodeURIComponent(d2.batch.user_name)+"\");return false'>batches by this user</a>)</small>" ;
 			h += "</p>" ;
 			h += "<p>Status: <b>" + d2.batch.status + "</b> <small>" + me.safeHTML(d2.batch.message) + "</small></p>" ;
@@ -221,7 +226,7 @@ var QuickStatements = {
 				var batch_id = d2.batch.id ;
 				h += "<tr>" ;
 				h += "<td><a href='#mode=batch&batch="+batch_id+"'>"+batch_id+"</td>" ;
-				h += "<td nowrap><a href='http://172.20.48.39/wiki/index.php/User:" + encodeURIComponent(d2.batch.user_name) + "' target='_blank'>" + me.safeHTML(d2.batch.user_name) + "</a></td>" ;
+				h += "<td nowrap><a href='" + this.getSiteBase() + "index.php/User:" + encodeURIComponent(d2.batch.user_name) + "' target='_blank'>" + me.safeHTML(d2.batch.user_name) + "</a></td>" ;
 				h += "<td>" + me.safeHTML(d2.batch.name) + "</td>" ;
 				h += "<td>" ;
 				h += "<div>" + me.safeHTML(d2.batch.status) + " <small>" + me.safeHTML(d2.batch.message) + "</small></div>" ;
