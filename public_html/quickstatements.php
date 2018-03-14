@@ -79,7 +79,7 @@ class QuickStatements {
 	
 	public function getOA() {
 		if ( !isset($this->oa) ) {
-			$this->oa = new MW_OAuth ( 'quickstatements' , '' , '', $sites->$site ) ;
+			$this->oa = new MW_OAuth ( 'quickstatements' , '' , '', $this->sites->{$this->site} ) ;
 		}
 		return $this->oa ;
 	}

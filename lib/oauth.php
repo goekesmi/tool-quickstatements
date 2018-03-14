@@ -7,7 +7,7 @@ class MW_OAuth {
 	var $debugging = true ;
 	var $language , $project ;
 	var $ini_file , $params ;
-	var $mwOAuthUrl = 'http://172.20.48.41/wiki/index.php?title=Special:OAuth';
+	var $mwOAuthUrl = '';
 	var $mwOAuthIW = 'mw'; // Set this to the interwiki prefix for the OAuth central wiki.
 	var $userinfo ;
 	
@@ -17,9 +17,12 @@ class MW_OAuth {
 		$this->project = $p ;
 		$this->site = $site;
 		$this->ini_file = "/data/project/$t/oauth.ini" ;
-		
-		$this->apiUrl = "http://172.20.48.41/wiki/api.php" ;
 
+		$this->WikiBaseUrl = $site->protocol . "://" . $site->server . $site->wikiroot;
+		
+		$this->apiUrl = $this->WikiBaseUrl . "api.php" ;
+
+		$this->mwOAuthUrl = $this->WikiBaseUrl . 'index.php?title=Special:OAuth';
 		
 
 		$this->loadIniFile() ;
