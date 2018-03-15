@@ -32,18 +32,6 @@ function myurlencode ( $t ) {
 	return $t ;
 }
 
-function getWebserverForWiki ( $wiki ) {
-	$wiki = preg_replace ( '/_p$/' , '' , $wiki ) ; // Paranoia
-	if ( $wiki == 'commonswiki' ) return "commons.wikimedia.org" ;
-	if ( $wiki == 'wikidatawiki' ) return "www.wikidata.org" ;
-	if ( $wiki == 'specieswiki' ) return "species.wikimedia.org" ;
-	if ( $wiki == '172.20.48.41' ) return "172.20.48.41" ;
-	$wiki = preg_replace ( '/_/' , '-' , $wiki ) ;
-	if ( preg_match ( '/^(.+)wiki$/' , $wiki , $m ) ) return $m[1].".wikipedia.org" ;
-	if ( preg_match ( '/^(.+)(wik.+)$/' , $wiki , $m ) ) return $m[1].".".$m[2].".org" ;
-	return '' ;
-}
-
 function escape_attribute ( $s ) {
 	$ret = preg_replace ( "/\"/" , '&quot;' , $s ) ;
 	$ret = preg_replace ( "/'/" , '&apos;' , $ret ) ;
@@ -266,7 +254,6 @@ function get_common_header ( $script , $title , $p = array() ) {
 function get_common_footer() {
 	return "</div></div></body></html>" ;
 }
-
 
 function get_request ( $key , $default = "" ) {
 	global $prefilled_requests ;
