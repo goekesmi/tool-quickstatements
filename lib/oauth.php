@@ -504,7 +504,8 @@ Claims are used like this:
 	function doesClaimExist ( $claim ) {
 		$q = 'Q' . str_replace('Q','',$claim['q'].'') ;
 		$p = 'P' . str_replace('P','',$claim['prop'].'') ;
-		$url = 'http://172.20.48.41/wiki/api.php?action=wbgetentities&format=json&props=claims&ids=' . $q ;
+		$url = $this->WikiBaseUrl . 'api.php?action=wbgetentities&format=json&props=claims&ids=' . $q ;
+		
 		$j = json_decode ( file_get_contents ( $url ) ) ;
 	//	print "<pre>" ; print_r ( $j ) ; print "</pre>" ;
 

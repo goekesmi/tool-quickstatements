@@ -66,7 +66,7 @@ class QuickStatements {
 	
 	public function __construct () {
 		$this->sites = json_decode ( file_get_contents ( __DIR__ . '/sites.json' ) ) ;
-		$this->wd = new WikidataItemList () ;
+		$this->wd = new WikidataItemList ($this->sites->{$this->site}) ;
 	}
 /*	
 	public function setBatchRun ( $is_batch ) {

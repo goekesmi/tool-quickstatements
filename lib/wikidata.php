@@ -256,6 +256,17 @@ class WikidataItemList {
 
 	protected $items = array() ;
 
+	public $apiurl = "";
+
+	public function WikidataItemList (&$site) {
+		
+		$this->site = $site;
+
+		$this->apiurl = $site->protocol . "://" . $site->server . $site->wikiroot . "api.php";
+
+		return $this;
+	}
+
 	public function sanitizeQ ( &$q ) {
 		if ( preg_match ( '/^P\d+$/i' , "$q" ) ) {
 			$q = strtoupper ( $q ) ;
@@ -311,7 +322,7 @@ class WikidataItemList {
     	$urls = array() ;
     	foreach ( $qs AS $k => $sublist ) {
     		if ( count ( $sublist ) == 0 ) continue ;
-			$url = "$wikidata_api_url?action=wbgetentities&ids=" . implode('|',$sublist) . "&format=json" ;
+			$url = $this->apiurl . "?action=wbgetentities&ids=" . implode('|',$sublist) . "&format=json" ;
 			$urls[$k] = $url ;
     	}
     	
@@ -344,58 +355,58 @@ class WikidataItemList {
     	return isset($this->items[$q]) ;
     }
 	
-	public function loadItemByPage ( $page , $wiki ) {
-		$page = urlencode ( ucfirst ( str_replace ( ' ' , '_' , trim($page) ) ) ) ;
-		$url = "http://172.20.48.41/wiki/api.php?action=wbgetentities&sites=$wiki&titles=$page&format=json" ;
-		$j = json_decode ( file_get_contents ( $url ) ) ;
-		if ( !isset($j) or !isset($j->entities) ) return false ;
-		$this->parseEntities ( $j ) ;
-		foreach ( $j->entities AS $q => $dummy ) {
-			return $q ;
-		}
+    public function loadItemByPage ( $page , $wiki ) {
+	$page = urlencode ( ucfirst ( str_replace ( ' ' , '_' , trim($page) ) ) ) ;
+	$url = $this->apiurl . "?action=wbgetentities&sites=$wiki&titles=$page&format=json" ;
+	$j = json_decode ( file_get_contents ( $url ) ) ;
+	if ( !isset($j) or !isset($j->entities) ) return false ;
+	$this->parseEntities ( $j ) ;
+	foreach ( $j->entities AS $q => $dummy ) {
+		return $q ;
+	}
+    }
+
+    protected function getMultipleURLsInParallel ( $urls ) {
+	$ret = array() ;
+
+	$batch_size = 50 ;
+	$batches = array( array() ) ;
+	foreach ( $urls AS $k => $v ) {
+		if ( count($batches[count($batches)-1]) >= $batch_size ) $batches[] = array() ;
+		$batches[count($batches)-1][$k] = $v ;
 	}
 
-	protected function getMultipleURLsInParallel ( $urls ) {
-		$ret = array() ;
-	
-		$batch_size = 50 ;
-		$batches = array( array() ) ;
-		foreach ( $urls AS $k => $v ) {
-			if ( count($batches[count($batches)-1]) >= $batch_size ) $batches[] = array() ;
-			$batches[count($batches)-1][$k] = $v ;
+	foreach ( $batches AS $batch_urls ) {
+
+		$mh = curl_multi_init();
+		curl_multi_setopt  ( $mh , CURLMOPT_PIPELINING , 1 ) ;
+	//	curl_multi_setopt  ( $mh , CURLMOPT_MAX_TOTAL_CONNECTIONS , 5 ) ;
+		$ch = array() ;
+		foreach ( $batch_urls AS $key => $value ) {
+			$ch[$key] = curl_init($value);
+	//		curl_setopt($ch[$key], CURLOPT_NOBODY, true);
+	//		curl_setopt($ch[$key], CURLOPT_HEADER, true);
+			curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch[$key], CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch[$key], CURLOPT_SSL_VERIFYHOST, false);
+			curl_multi_add_handle($mh,$ch[$key]);
 		}
-	
-		foreach ( $batches AS $batch_urls ) {
-	
-			$mh = curl_multi_init();
-			curl_multi_setopt  ( $mh , CURLMOPT_PIPELINING , 1 ) ;
-		//	curl_multi_setopt  ( $mh , CURLMOPT_MAX_TOTAL_CONNECTIONS , 5 ) ;
-			$ch = array() ;
-			foreach ( $batch_urls AS $key => $value ) {
-				$ch[$key] = curl_init($value);
-		//		curl_setopt($ch[$key], CURLOPT_NOBODY, true);
-		//		curl_setopt($ch[$key], CURLOPT_HEADER, true);
-				curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch[$key], CURLOPT_SSL_VERIFYPEER, false);
-				curl_setopt($ch[$key], CURLOPT_SSL_VERIFYHOST, false);
-				curl_multi_add_handle($mh,$ch[$key]);
-			}
-	
-			do {
-				curl_multi_exec($mh, $running);
-				curl_multi_select($mh);
-			} while ($running > 0);
-	
-			foreach(array_keys($ch) as $key){
-				$ret[$key] = curl_multi_getcontent($ch[$key]) ;
-				curl_multi_remove_handle($mh, $ch[$key]);
-			}
-	
-			curl_multi_close($mh);
+
+		do {
+			curl_multi_exec($mh, $running);
+			curl_multi_select($mh);
+		} while ($running > 0);
+
+		foreach(array_keys($ch) as $key){
+			$ret[$key] = curl_multi_getcontent($ch[$key]) ;
+			curl_multi_remove_handle($mh, $ch[$key]);
 		}
-	
-		return $ret ;
+
+		curl_multi_close($mh);
 	}
+
+	return $ret ;
+    }
 
 }
 
